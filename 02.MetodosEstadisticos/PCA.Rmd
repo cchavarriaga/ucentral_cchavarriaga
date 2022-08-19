@@ -1,0 +1,80 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+---
+
+<font color="Magenta" FONT SIZE =7> ***Métodos estadísticos para analítica de datos.***</font>
+
+> ## _Software de apoyo: `R`_
+> _Luis Andres Campos Maldonado_
+---
+
+---
+
+```{r,echo=T,message=F,warning=F}
+library(FactoMineR)
+library(corrplot)
+library(factoextra)
+
+```
+
+## ***Ejemplo 1.***
+
+```{r}
+url1= "https://raw.githubusercontent.com/lacamposm/Metodos_Estadisticos/main/data/birds.txt"
+df_birds = read.csv(url1, sep=" ", dec=",")
+df_birds = na.omit(df_birds)
+df_birds$pajaro = as.character(df_birds$pajaro)
+head(df_birds)
+```
+
+```{r}
+summary(df_birds)
+```
+Realizamos algunas correcciones en la data:
+
+```{r}
+df_birds$longitud_humero = as.numeric(df_birds$longitud_humero)
+df_birds$longitud_pico_y_cabeza = as.numeric(df_birds$longitud_pico_y_cabeza)
+df_birds$longitud_quilla = as.numeric(df_birds$longitud_quilla)
+summary(df_birds)
+```
+
+Veamos al matriz de correlacion:
+
+```{r}
+corrplot(cor(df_birds[-c(1)]),)
+```
+
+## ***Construcción PCA***
+
+En este caso debemos llamar al objeto PCA y escalar la información:
+```{r}
+acp = PCA(df_birds, scale.unit = T, quali.sup = 1, graph = F,)
+```
+```{r}
+fviz_pca_var(acp)
+```
+
+El plot anterior tiene la misma interpretación que en el caso de `Python`, ¿por qué los ejes se muestran al revés?
+
+Esto se debe a que si el vector $X$ es vector propio, $-X$ también lo es. Notemos que los valores de la varianza y por supuesto la varianza explicada coinciden.
+
+```{r}
+acp$eig
+```
+
+```{r}
+fviz_pca_biplot(acp, axes=c(1,2), repel = T, habilige=1)
+```
+
+Los análisis son exactamente los mismos que se comentaron con el uso de `Python`.
+
+```{r}
+fviz_pca_ind(acp)
+
+```
+
